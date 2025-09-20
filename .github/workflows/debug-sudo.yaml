@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  sudo:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,3 +44,12 @@ jobs:
             echo "✗ example-user XDG_CONFIG_HOME should not be '/home/runner/.config'"
             exit 1
           fi
+
+  uv:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install uv
+        run: |
+          sudo useradd --create-home --shell=/bin/bash example-user
+          curl -LsSf https://astral.sh/uv/install.sh | sudo -u example-user sh
