@@ -1,0 +1,30 @@
+name: Debug Sudo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+
+# Limit this workflow to a single run at a time per-branch to avoid wasting worker resources
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Troubleshoot Sudo
+        run: |
+          sudo sudo -V
+
+          cat /etc/environment
+          printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
+          sudo printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
+
+          sudo useradd --create-home --shell=/bin/bash coppy-tests
+          sudo -u coppy-tests printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
