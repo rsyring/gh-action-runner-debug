@@ -31,6 +31,7 @@ jobs:
             echo "✓ Sudo XDG_CONFIG_HOME is correctly set to /home/runner/.config"
           else
             echo "✗ Sudo XDG_CONFIG_HOME is '$sudo_xdg', expected '/home/runner/.config'"
+            exit 1
           fi
 
       - name: Alternate User
@@ -41,4 +42,5 @@ jobs:
             echo "✓ example-user XDG_CONFIG_HOME is correctly different: '$alt_xdg'"
           else
             echo "✗ example-user XDG_CONFIG_HOME should not be '/home/runner/.config'"
+            exit 1
           fi
