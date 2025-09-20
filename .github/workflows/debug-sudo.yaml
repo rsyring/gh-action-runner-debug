@@ -45,6 +45,24 @@ jobs:
             exit 1
           fi
 
+
+  sudo-fixed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fix sudo
+        run: |
+          sudo sed -i '/XDG_RUNTIME_DIR\|\(=\/home\/runner\)/d' /etc/environment
+
+          sudo_xdg=$(sudo printenv XDG_CONFIG_HOME || echo "")
+          if [ "$sudo_xdg" = "" ]; then
+            echo "✓ Sudo XDG_CONFIG_HOME is no longer being set"
+          else
+            echo "✗ Sudo XDG_CONFIG_HOME is still being set"
+            exit 1
+          fi
+
+
   uv-fail:
     runs-on: ubuntu-latest
 
