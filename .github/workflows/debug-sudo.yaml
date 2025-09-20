@@ -18,13 +18,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Troubleshoot Sudo
+      - name: Runner User
         run: |
-          sudo sudo -V
+          if [ "$XDG_CONFIG_HOME" = "/home/runner/.config" ]; then
+            echo "✓ Runner XDG_CONFIG_HOME is correctly set to /home/runner/.config"
+          else
+            echo "✗ Runner XDG_CONFIG_HOME is '$XDG_CONFIG_HOME', expected '/home/runner/.config'"
+          fi
 
-          cat /etc/environment
-          printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
-          sudo printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
+          sudo_xdg=$(sudo printenv XDG_CONFIG_HOME || echo "")
+          if [ "$sudo_xdg" = "/home/runner/.config" ]; then
+            echo "✓ Sudo XDG_CONFIG_HOME is correctly set to /home/runner/.config"
+          else
+            echo "✗ Sudo XDG_CONFIG_HOME is '$sudo_xdg', expected '/home/runner/.config'"
+          fi
 
-          sudo useradd --create-home --shell=/bin/bash coppy-tests
-          sudo -u coppy-tests printenv XDG_CONFIG_HOME || echo "No XDG_CONFIG_HOME"
+      - name: Alternate User
+        run: |
+          sudo useradd --create-home --shell=/bin/bash example-user
+          alt_xdg=$(sudo -u example-user printenv XDG_CONFIG_HOME || echo "")
+          if [ "$alt_xdg" != "/home/runner/.config" ]; then
+            echo "✓ example-user XDG_CONFIG_HOME is correctly different: '$alt_xdg'"
+          else
+            echo "✗ example-user XDG_CONFIG_HOME should not be '/home/runner/.config'"
+          fi
