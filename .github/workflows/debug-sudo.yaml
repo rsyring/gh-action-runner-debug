@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
 
-  uv:
+  uv-fail:
     runs-on: ubuntu-latest
 
     steps:
@@ -53,3 +53,13 @@ jobs:
         run: |
           sudo useradd --create-home --shell=/bin/bash example-user
           curl -LsSf https://astral.sh/uv/install.sh | sudo -u example-user sh
+
+  uv-fixed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fix Install By Unsetting XDG_CONFIG_HOME
+        run: |
+          sudo useradd --create-home --shell=/bin/bash example-user
+          curl -LsSf https://astral.sh/uv/install.sh | sudo -u example-user env -u XDG_CONFIG_HOME sh
+          ls /home/example-user/.config/
